@@ -16,13 +16,11 @@ config.yaml
 tunnel.json
 tunnel.yml
 sub.txt
-list.txt
 
 # 二进制文件
 web
 bot
 npm
-php
 
 # 系统文件
 .DS_Store
