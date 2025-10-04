@@ -22,7 +22,7 @@ nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏�
 
 | 变量名 | 是否必须 | 默认值 | 说明 |
 |--------|----------|--------|------|
-| PORT | 否 | 3000 | HTTP服务监听端口 |
+| PORT | 否 | 3005 | HTTP服务监听端口 |
 | ARGO_PORT | 否 | 8001 | Argo隧道端口 |
 | UUID | 否 | 75de94bb-b5cb-4ad4-b72b-251476b36f3a | 用户UUID |
 | ARGO_DOMAIN | 否 | - | Argo固定隧道域名 |
@@ -46,26 +46,26 @@ nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏�
 
 ```bash
 # 全局安装（推荐）
-npm install -g nodejs-argo
+npm install -g nodejs-argo-xray
 
 # 或者使用yarn
-yarn global add nodejs-argo
+yarn global add nodejs-argo-xray
 
 # 或者使用pnpm
-pnpm add -g nodejs-argo
+pnpm add -g nodejs-argo-xray
 ```
 
 ### 基本使用
 
 ```bash
 # 直接运行（使用默认配置）
-nodejs-argo
+nodejs-argo-xray
 
 # 使用npx运行
-npx nodejs-argo
+npx nodejs-argo-xray
 
 # 设置环境变量运行
-PORT=3000 npx nodejs-argo
+PORT=3005 npx nodejs-argo-xray
 ```
 
 ### 环境变量配置
@@ -76,7 +76,7 @@ PORT=3000 npx nodejs-argo
 或者直接在命令行中设置：
 
 ```bash
-export PORT=3000
+export PORT=3005
 export UUID="your-uuid-here"
 ```
 
@@ -84,10 +84,10 @@ export UUID="your-uuid-here"
 
 ```javascript
 // CommonJS
-const nodejsArgo = require('nodejs-argo');
+const nodejsArgo = require('nodejs-argo-xray');
 
 // ES6 Modules
-import nodejsArgo from 'nodejs-argo';
+import nodejsArgo from 'nodejs-argo-xray';
 
 // 启动服务
 nodejsArgo.start();
@@ -101,7 +101,7 @@ nodejsArgo.start();
 screen -S argo
 
 # 运行应用
-nodejs-argo
+nodejs-argo-xray
 
 # 按 Ctrl+A 然后按 D 分离会话
 # 重新连接：screen -r argo
@@ -113,7 +113,7 @@ nodejs-argo
 tmux new-session -d -s argo
 
 # 运行应用
-tmux send-keys -t argo "nodejs-argo" Enter
+tmux send-keys -t argo "nodejs-argo-xray" Enter
 
 # 分离会话：tmux detach -s argo
 # 重新连接：tmux attach -t argo
@@ -125,7 +125,7 @@ tmux send-keys -t argo "nodejs-argo" Enter
 npm install -g pm2
 
 # 启动应用
-pm2 start nodejs-argo --name "argo-service"
+pm2 start nodejs-argo-xray --name "argo-service"
 
 # 管理应用
 pm2 status
@@ -147,9 +147,9 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/root/test
-Environment=ARGO_PORT=8080
-Environment=PORT=3000
-ExecStart=/usr/bin/npx nodejs-argo
+Environment=ARGO_PORT=8001
+Environment=PORT=3005
+ExecStart=/usr/bin/npx nodejs-argo-xray
 Restart=always
 RestartSec=10
 
@@ -158,33 +158,28 @@ WantedBy=multi-user.target
 ```
 
 # 启动服务
-sudo systemctl start nodejs-argo
-sudo systemctl enable nodejs-argo
+sudo systemctl start nodejs-argo-xray
+sudo systemctl enable nodejs-argo-xray
 ```
 
 ## 🔄 更新
 
 ```bash
 # 更新全局安装的包
-npm update -g nodejs-argo
+npm update -g nodejs-argo-xray
 
 # 或者重新安装
-npm uninstall -g nodejs-argo
-npm install -g nodejs-argo
+npm uninstall -g nodejs-argo-xray
+npm install -g nodejs-argo-xray
 ```
 
 ## 📚 更多信息
 
-- [GitHub仓库](https://github.com/eooce/nodejs-argo)
-- [npm包页面](https://www.npmjs.com/package/nodejs-argo)
-- [问题反馈](https://github.com/eooce/nodejs-argo/issues)
+- [GitHub仓库](https://github.com/dogchild/nodejs-argo-xray)
+- [npm包页面](https://www.npmjs.com/package/nodejs-argo-xray)
+- [问题反馈](https://github.com/dogchild/nodejs-argo-xray/issues)
 
 ---
-
-## 赞助
-* 感谢[VPS.Town](https://vps.town)提供赞助 <a href="https://vps.town" target="_blank"><img src="https://vps.town/static/images/sponsor.png" width="30%" alt="https://vps.town"></a>
-
-* 感谢[ZMTO](https://zmto.com/?affid=1548)提供赞助优质双isp vps。
   
 # 免责声明
 * 本程序仅供学习了解, 非盈利目的，请于下载后 24 小时内删除, 不得用作任何商业用途, 文字、数据及图片均有所属版权, 如转载须注明来源。
