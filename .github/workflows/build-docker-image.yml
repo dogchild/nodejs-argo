@@ -38,10 +38,10 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/nodejs:latest
+            ghcr.io/${{ github.repository_owner }}/nodejs-argo-xray:latest
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
-            org.opencontainers.image.description=Express Server
+            org.opencontainers.image.description=Node.js project with Argo Xray
             org.opencontainers.image.licenses=MIT
           cache-from: type=gha
           cache-to: type=gha,mode=max
