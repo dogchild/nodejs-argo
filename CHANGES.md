@@ -16,7 +16,7 @@
   - ARM64: `arm.dogchild.eu.org/xray` 和 `arm.dogchild.eu.org/cloudflared`
 
 ### 3. 升级Express框架
-- ✅ Express 版本从 4.18.2 升级到 ^5.0.0
+- ✅ Express 版本从 4.18.2 升级到 ^5.1.0（最新稳定版）
 - ✅ Node.js 最低版本要求从 >=14 提升到 >=18
 - ✅ 更新Dockerfile使用 node:18-slim 基础镜像
 
