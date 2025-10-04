@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "This is a node project",
   "main": "index.js",
-  "author": "eooce",
+  "author": "dogchild",
   "repository": "https://github.com/dogchild/nodejs-argo",
   "license": "MIT",
   "private": false,
