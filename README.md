@@ -10,7 +10,6 @@ nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏�
 
 ---
 
-Telegram交流反馈群组：https://t.me/eooceu
 </div>
 
 ## 说明 （部署前请仔细阅读）
@@ -23,15 +22,12 @@ Telegram交流反馈群组：https://t.me/eooceu
 
 | 变量名 | 是否必须 | 默认值 | 说明 |
 |--------|----------|--------|------|
-| UPLOAD_URL | 否 | - | 订阅上传地址 |
-| PROJECT_URL | 否 | https://www.google.com | 项目分配的域名 |
-| AUTO_ACCESS | 否 | false | 是否开启自动访问保活 |
 | PORT | 否 | 3000 | HTTP服务监听端口 |
 | ARGO_PORT | 否 | 8001 | Argo隧道端口 |
-| UUID | 否 | 89c13786-25aa-4520-b2e7-12cd60fb5202 | 用户UUID |
+| UUID | 否 | 75de94bb-b5cb-4ad4-b72b-251476b36f3a | 用户UUID |
 | ARGO_DOMAIN | 否 | - | Argo固定隧道域名 |
 | ARGO_AUTH | 否 | - | Argo固定隧道密钥 |
-| CFIP | 否 | www.visa.com.tw | 节点优选域名或IP |
+| CFIP | 否 | cf.877774.xyz | 节点优选域名或IP |
 | CFPORT | 否 | 443 | 节点端口 |
 | NAME | 否 | Vls | 节点名称前缀 |
 | FILE_PATH | 否 | ./tmp | 运行目录 |
@@ -69,7 +65,7 @@ nodejs-argo
 npx nodejs-argo
 
 # 设置环境变量运行
- PORT=3000 npx nodejs-argo
+PORT=3000 npx nodejs-argo
 ```
 
 ### 环境变量配置
@@ -80,8 +76,6 @@ npx nodejs-argo
 或者直接在命令行中设置：
 
 ```bash
-export UPLOAD_URL="https://your-merge-sub-domain.com"
-export PROJECT_URL="https://your-project-domain.com"
 export PORT=3000
 export UUID="your-uuid-here"
 ```
