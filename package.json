@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "axios": "latest",
-    "express": "^4.18.2"
+    "express": "^5.0.0"
   },
   "engines": {
-    "node": ">=14"
+    "node": ">=18"
   }
 }
