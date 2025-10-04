@@ -1,3 +1,4 @@
+require('dotenv').config({ override: true });
 const express = require("express");
 const app = express();
 const axios = require("axios");
@@ -288,7 +289,7 @@ async function extractDomains() {
   // 生成 list 和 sub 信息
   async function generateLinks(argoDomain) {
     const metaInfo = execSync(
-      'curl -s https://speed.cloudflare.com/meta | awk -F\" \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
+      'curl -s https://speed.cloudflare.com/meta | awk -F" \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
       { encoding: 'utf-8' }
     );
     const ISP = metaInfo.trim();
