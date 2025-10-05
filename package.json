@@ -4,14 +4,17 @@
   "description": "A Node.js tool that provides xray subscription links via Cloudflare Argo tunnels.",
   "main": "index.js",
   "author": "dogchild",
-  "repository": "https://github.com/dogchild/nodejs-argo-xray",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dogchild/nodejs-argo-xray.git"
+  },
   "license": "MIT",
   "private": false,
   "scripts": {
     "start": "node index.js"
   },
   "bin": {
-    "nodejs-argo-xray": "./index.js"
+    "nodejs-argo-xray": "index.js"
   },
   "files": [
     "index.js",
