@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 require('dotenv').config({ override: true });
 const express = require("express");
 const app = express();
