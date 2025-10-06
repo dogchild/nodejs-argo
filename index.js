@@ -37,7 +37,7 @@ let configPath = path.join(FILE_PATH, 'config.json');
 
 //清理历史文件
 function cleanupOldFiles() {
-  const pathsToDelete = ['web', 'bot', 'sub.txt', 'boot.log'];
+  const pathsToDelete = ['sub.txt', 'boot.log'];
   pathsToDelete.forEach(file => {
     const filePath = path.join(FILE_PATH, file);
     fs.unlink(filePath, () => {});
@@ -110,11 +110,25 @@ function downloadFile(fileName, fileUrl, callback) {
 // 下载并运行依赖文件
 async function downloadFilesAndRun() {
   const architecture = getSystemArchitecture();
-  const filesToDownload = getFilesForArchitecture(architecture);
+  const allFiles = getFilesForArchitecture(architecture);
 
-  if (filesToDownload.length === 0) {
+  if (allFiles.length === 0) {
     console.log(`Can't find a file for the current architecture`);
     return;
+  }
+
+  // 过滤掉已存在的文件，只下载不存在的文件
+  const filesToDownload = allFiles.filter(fileInfo => {
+    const filePath = path.join(FILE_PATH, fileInfo.fileName);
+    const exists = fs.existsSync(filePath);
+    if (exists) {
+      console.log(`${fileInfo.fileName} already exists, skipping download`);
+    }
+    return !exists;
+  });
+
+  if (filesToDownload.length === 0) {
+    console.log('All required files already exist, skipping download');
   }
 
   const downloadPromises = filesToDownload.map(fileInfo => {
