@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 require('dotenv').config({ override: true });
 const express = require("express");
 const app = express();
@@ -321,19 +322,7 @@ trojan://${UUID}@${CFIP}:${CFPORT}?security=tls&sni=${argoDomain}&type=ws&host=$
   }
 }
 
-// 90s后删除相关文件
-function cleanFiles() {
-  setTimeout(() => {
-    const filesToDelete = [bootLogPath, configPath, webPath, botPath];  
-    
-    exec(`rm -rf ${filesToDelete.join(' ')} >/dev/null 2>&1`, (error) => {
-      console.clear();
-      console.log('App is running');
-      console.log('Thank you for using this script, enjoy!');
-    });
-  }, 90000); // 90s
-}
-cleanFiles();
+
 
 // 回调运行
 async function startserver() {
