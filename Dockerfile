@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # 安装生产环境依赖
-RUN npm ci --only=production
+RUN npm install --only=production
 
 # 第二阶段：运行阶段
 FROM node:lts-slim
