@@ -89,8 +89,37 @@ function downloadFile(fileName, fileUrl, callback) {
 
       writer.on('finish', () => {
         writer.close();
-        console.log(`Download ${fileName} successfully`);
-        callback(null, fileName);
+        
+        // 获取下载文件的实际大小
+        fs.stat(filePath, (err, stats) => {
+          if (err) {
+            const errorMessage = `Failed to check file size: ${err.message}`;
+            console.error(errorMessage);
+            fs.unlink(filePath, () => {});
+            callback(errorMessage);
+            return;
+          }
+          
+          // 从响应头获取预期的文件大小
+          const expectedSize = response.headers['content-length'];
+          
+          // 如果服务器提供了Content-Length，则进行校验
+          if (expectedSize) {
+            const expectedBytes = parseInt(expectedSize);
+            const actualBytes = stats.size;
+            
+            if (expectedBytes !== actualBytes) {
+              const errorMessage = `File ${fileName} integrity check failed: expected ${expectedBytes} bytes, got ${actualBytes} bytes`;
+              console.error(errorMessage);
+              fs.unlink(filePath, () => {});
+              callback(errorMessage);
+              return;
+            }
+          }
+          
+          console.log(`Download ${fileName} successfully`);
+          callback(null, fileName);
+        });
       });
 
       writer.on('error', err => {
