@@ -1,12 +1,12 @@
 <div align="center">
 
-# nodejs-argo隧道代理
+# nodejs-argo-x隧道代理
 
-[![npm version](https://img.shields.io/npm/v/nodejs-argo.svg)](https://www.npmjs.com/package/nodejs-argo)
-[![npm downloads](https://img.shields.io/npm/dm/nodejs-argo.svg)](https://www.npmjs.com/package/nodejs-argo)
-[![License](https://img.shields.io/npm/l/nodejs-argo.svg)](https://github.com/eooce/nodejs-argo/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/nodejs-argo-x.svg)](https://www.npmjs.com/package/nodejs-argo-x)
+[![npm downloads](https://img.shields.io/npm/dm/nodejs-argo-x.svg)](https://www.npmjs.com/package/nodejs-argo-x)
+[![License](https://img.shields.io/npm/l/nodejs-argo-x.svg)](https://github.com/eooce/nodejs-argo-x/blob/main/LICENSE)
 
-nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏玩具平台设计。它支持多种代理协议（VLESS、VMess、Trojan等）。
+nodejs-argo-x是一个强大的Argo隧道部署工具，专为PaaS平台和游戏玩具平台设计。它支持多种代理协议（VLESS、VMess、Trojan等）。
 
 ---
 
@@ -46,26 +46,26 @@ nodejs-argo是一个强大的Argo隧道部署工具，专为PaaS平台和游戏�
 
 ```bash
 # 全局安装（推荐）
-npm install -g nodejs-argo-xray
+npm install -g nodejs-argo-x
 
 # 或者使用yarn
-yarn global add nodejs-argo-xray
+yarn global add nodejs-argo-x
 
 # 或者使用pnpm
-pnpm add -g nodejs-argo-xray
+pnpm add -g nodejs-argo-x
 ```
 
 ### 基本使用
 
 ```bash
 # 直接运行（使用默认配置）
-nodejs-argo-xray
+nodejs-argo-x
 
 # 使用npx运行
-npx nodejs-argo-xray
+npx nodejs-argo-x
 
 # 设置环境变量运行
-PORT=3005 npx nodejs-argo-xray
+PORT=3005 npx nodejs-argo-x
 ```
 
 ### 环境变量配置
@@ -84,13 +84,13 @@ export UUID="your-uuid-here"
 
 ```javascript
 // CommonJS
-const nodejsArgo = require('nodejs-argo-xray');
+const nodejsArgox = require('nodejs-argo-x');
 
 // ES6 Modules
-import nodejsArgo from 'nodejs-argo-xray';
+import nodejsArgox from 'nodejs-argo-x';
 
 // 启动服务
-nodejsArgo.start();
+nodejsArgox.start();
 ```
 
 ## 🔧 后台运行
@@ -101,7 +101,7 @@ nodejsArgo.start();
 screen -S argo
 
 # 运行应用
-nodejs-argo-xray
+nodejs-argo-x
 
 # 按 Ctrl+A 然后按 D 分离会话
 # 重新连接：screen -r argo
@@ -113,7 +113,7 @@ nodejs-argo-xray
 tmux new-session -d -s argo
 
 # 运行应用
-tmux send-keys -t argo "nodejs-argo-xray" Enter
+tmux send-keys -t argo "nodejs-argo-x" Enter
 
 # 分离会话：tmux detach -s argo
 # 重新连接：tmux attach -t argo
@@ -125,7 +125,7 @@ tmux send-keys -t argo "nodejs-argo-xray" Enter
 npm install -g pm2
 
 # 启动应用
-pm2 start nodejs-argo-xray --name "argo-service"
+pm2 start nodejs-argo-x --name "argo-service"
 
 # 管理应用
 pm2 status
@@ -136,7 +136,7 @@ pm2 restart argo-service
 ### 使用systemd（Linux系统服务）
 ```bash
 # 创建服务文件
-sudo nano /etc/systemd/system/nodejs-argo.service
+sudo nano /etc/systemd/system/nodejs-argo-x.service
 
 ```
 [Unit]
@@ -149,7 +149,7 @@ User=root
 WorkingDirectory=/root/test
 Environment=ARGO_PORT=8001
 Environment=PORT=3005
-ExecStart=/usr/bin/npx nodejs-argo-xray
+ExecStart=/usr/bin/npx nodejs-argo-x
 Restart=always
 RestartSec=10
 
@@ -158,26 +158,26 @@ WantedBy=multi-user.target
 ```
 
 # 启动服务
-sudo systemctl start nodejs-argo-xray
-sudo systemctl enable nodejs-argo-xray
+sudo systemctl start nodejs-argo-x
+sudo systemctl enable nodejs-argo-x
 ```
 
 ## 🔄 更新
 
 ```bash
 # 更新全局安装的包
-npm update -g nodejs-argo-xray
+npm update -g nodejs-argo-x
 
 # 或者重新安装
-npm uninstall -g nodejs-argo-xray
-npm install -g nodejs-argo-xray
+npm uninstall -g nodejs-argo-x
+npm install -g nodejs-argo-x
 ```
 
 ## 📚 更多信息
 
-- [GitHub仓库](https://github.com/dogchild/nodejs-argo-xray)
-- [npm包页面](https://www.npmjs.com/package/nodejs-argo-xray)
-- [问题反馈](https://github.com/dogchild/nodejs-argo-xray/issues)
+- [GitHub仓库](https://github.com/dogchild/nodejs-argo-x)
+- [npm包页面](https://www.npmjs.com/package/nodejs-argo-x)
+- [问题反馈](https://github.com/dogchild/nodejs-argo-x/issues)
 
 ---
   
