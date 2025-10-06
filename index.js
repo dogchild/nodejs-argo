@@ -101,6 +101,7 @@ function downloadFile(fileName, fileUrl, callback) {
       });
     })
     .catch(err => {
+      fs.unlink(filePath, () => { });
       const errorMessage = `Download ${fileName} failed: ${err.message}`;
       console.error(errorMessage); // 下载失败时输出错误消息
       callback(errorMessage);
