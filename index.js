@@ -15,7 +15,7 @@ const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3005;        // http服务订阅端口
 const UUID = process.env.UUID || '75de94bb-b5cb-4ad4-b72b-251476b36f3a'; // 用户UUID
 const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定隧道域名,留空即启用临时隧道
-const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定隧道密钥json或token,留空即启用临时隧道,json获取地址：https://fscarmen.cloudflare.now.cc
+const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定隧道token,留空即启用临时隧道
 const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定隧道端口,使用token需在cloudflare后台设置和这里一致
 const CFIP = process.env.CFIP || 'cf.877774.xyz';         // 节点优选域名或优选ip  
 const CFPORT = process.env.CFPORT || 443;                   // 节点优选域名或优选ip对应的端口
@@ -185,8 +185,6 @@ async function downloadFilesAndRun() {
 
     if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
       args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}`;
-    } else if (ARGO_AUTH.match(/TunnelSecret/)) {
-      args = `tunnel --edge-ip-version auto --config ${FILE_PATH}/tunnel.yml run`;
     } else {
       args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${ARGO_PORT}`;
     }
@@ -228,23 +226,10 @@ function argoType() {
     return;
   }
 
-  if (ARGO_AUTH.includes('TunnelSecret')) {
-    fs.writeFileSync(path.join(FILE_PATH, 'tunnel.json'), ARGO_AUTH);
-    const tunnelYaml = `
-  tunnel: ${ARGO_AUTH.split('"')[11]}
-  credentials-file: ${path.join(FILE_PATH, 'tunnel.json')}
-  protocol: http2
-  
-  ingress:
-    - hostname: ${ARGO_DOMAIN}
-      service: http://localhost:${ARGO_PORT}
-      originRequest:
-        noTLSVerify: true
-    - service: http_status:404
-  `;
-    fs.writeFileSync(path.join(FILE_PATH, 'tunnel.yml'), tunnelYaml);
+  if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
+    console.log("ARGO_AUTH is a token, connect to tunnel");
   } else {
-    console.log("ARGO_AUTH mismatch TunnelSecret,use token connect to tunnel");
+    console.log("ARGO_AUTH is not a token, will use quick tunnels");
   }
 }
 argoType();
