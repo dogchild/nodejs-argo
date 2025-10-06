@@ -304,11 +304,16 @@ async function extractDomains() {
 
   // 生成 sub 信息
   async function generateLinks(argoDomain) {
-    const metaInfo = execSync(
-      'curl -s https://speed.cloudflare.com/meta | awk -F\'"\' \'{print $26"-"$18}\' | sed -e \'s/ /_/g\'',
-      { encoding: 'utf-8' }
-    );
-    const ISP = metaInfo.trim();
+    let ISP = '';
+    try {
+      const response = await axios.get('https://speed.cloudflare.com/meta');
+      const data = response.data;
+      // 使用从JSON数据中提取的字段构建ISP信息
+      ISP = `${data.country}-${data.asOrganization}`.replace(/\s/g, '_');
+    } catch (error) {
+      console.error('Error fetching Cloudflare meta data:', error);
+      ISP = 'Unknown-ISP'; // 提供默认值以防止程序崩溃
+    }
 
     return new Promise((resolve) => {
       setTimeout(() => {
