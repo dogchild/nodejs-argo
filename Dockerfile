@@ -17,8 +17,8 @@ ENV TZ=Asia/Shanghai
 RUN apt-get update && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
 
 # 创建非root用户
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S node-app -u 1001
+RUN groupadd -g 1001 nodejs && \
+    useradd -u 1001 -g nodejs -m node-app
 
 WORKDIR /app
 
