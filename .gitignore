@@ -13,8 +13,6 @@ tmp/
 boot.log
 config.json
 config.yaml
-tunnel.json
-tunnel.yml
 sub.txt
 
 # 二进制文件

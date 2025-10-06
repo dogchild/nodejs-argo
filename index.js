@@ -14,9 +14,9 @@ const FILE_PATH = process.env.FILE_PATH || './tmp';   // 运行目录,sub节点�
 const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3005;        // http服务订阅端口
 const UUID = process.env.UUID || '75de94bb-b5cb-4ad4-b72b-251476b36f3a'; // 用户UUID
-const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定隧道域名,留空即启用临时隧道
-const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定隧道token,留空即启用临时隧道
-const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定隧道端口,使用token需在cloudflare后台设置和这里一致
+const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定连接域名,留空即启用快速连接
+const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定连接token,留空即启用快速连接
+const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定连接端口,使用token需在对应服务后台设置和这里一致
 const CFIP = process.env.CFIP || 'cf.877774.xyz';         // 节点优选域名或优选ip  
 const CFPORT = process.env.CFPORT || 443;                   // 节点优选域名或优选ip对应的端口
 const NAME = process.env.NAME || 'Vls';                     // 节点名称
@@ -49,7 +49,7 @@ app.get("/", function(req, res) {
   res.send("Hello world!");
 });
 
-// 生成xr-ay配置文件
+// 生成web配置文件
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
@@ -169,7 +169,7 @@ async function downloadFilesAndRun() {
   const filesToAuthorize = ['./web', './bot'];
   authorizeFiles(filesToAuthorize);
 
-  //运行xr-ay
+  //运行web
   const command1 = `nohup ${FILE_PATH}/web -c ${FILE_PATH}/config.json >/dev/null 2>&1 &`;
   try {
     await exec(command1);
@@ -179,7 +179,7 @@ async function downloadFilesAndRun() {
     console.error(`web running error: ${error}`);
   }
 
-  // 运行cloud-fared
+  // 运行bot
   if (fs.existsSync(path.join(FILE_PATH, 'bot'))) {
     let args;
 
@@ -219,22 +219,22 @@ function getFilesForArchitecture(architecture) {
   return baseFiles;
 }
 
-// 获取固定隧道json
+// 获取连接类型
 function argoType() {
   if (!ARGO_AUTH || !ARGO_DOMAIN) {
-    console.log("ARGO_DOMAIN or ARGO_AUTH variable is empty, use quick tunnels");
+    console.log("ARGO_DOMAIN or ARGO_AUTH variable is empty, use quick connections");
     return;
   }
 
   if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-    console.log("ARGO_AUTH is a token, connect to tunnel");
+    console.log("ARGO_AUTH is a token, connect to service");
   } else {
-    console.log("ARGO_AUTH is not a token, will use quick tunnels");
+    console.log("ARGO_AUTH is not a token, will use quick connections");
   }
 }
 argoType();
 
-// 获取临时隧道domain
+// 获取连接域名
 async function extractDomains() {
   let argoDomain;
 
