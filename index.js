@@ -9,7 +9,6 @@ const fs = require("fs");
 const path = require("path");
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
-const { execSync } = require('child_process');
 const FILE_PATH = process.env.FILE_PATH || './tmp';   // 运行目录,sub节点文件保存目录
 const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3005;        // http服务订阅端口
@@ -29,8 +28,6 @@ if (!fs.existsSync(FILE_PATH)) {
   console.log(`${FILE_PATH} already exists`);
 }
 
-let webPath = path.join(FILE_PATH, 'web');
-let botPath = path.join(FILE_PATH, 'bot');
 let subPath = path.join(FILE_PATH, 'sub.txt');
 let bootLogPath = path.join(FILE_PATH, 'boot.log');
 let configPath = path.join(FILE_PATH, 'config.json');
@@ -44,9 +41,16 @@ function cleanupOldFiles() {
   });
 }
 
+let subContent = '';
+
 // 根路由
 app.get("/", function(req, res) {
   res.send("Hello world!");
+});
+
+app.get(`/${SUB_PATH}`, (req, res) => {
+  res.set('Content-Type', 'text/plain; charset=utf-8');
+  res.send(subContent);
 });
 
 // 生成web配置文件
@@ -341,15 +345,10 @@ vmess://${Buffer.from(JSON.stringify(VMESS)).toString('base64')}
 trojan://${UUID}@${CFIP}:${CFPORT}?security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Ftrojan-argo%3Fed%3D2560#${NAME}-${ISP}-tr
     `;
         // 打印 sub.txt 内容到控制台
-        console.log(Buffer.from(subTxt).toString('base64'));
-        fs.writeFileSync(subPath, Buffer.from(subTxt).toString('base64'));
+        subContent = Buffer.from(subTxt).toString('base64');
+        console.log(subContent);
+        fs.writeFileSync(subPath, subContent);
         console.log(`${FILE_PATH}/sub.txt saved successfully`);
-        // 将内容进行 base64 编码并写入 SUB_PATH 路由
-        app.get(`/${SUB_PATH}`, (req, res) => {
-          const encodedContent = Buffer.from(subTxt).toString('base64');
-          res.set('Content-Type', 'text/plain; charset=utf-8');
-          res.send(encodedContent);
-        });
         resolve(subTxt);
       }, 2000);
     });
