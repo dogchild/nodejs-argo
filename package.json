@@ -1,6 +1,6 @@
 {
   "name": "nodejs-argo-x",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A Node.js tool that provides x subscription links via Argo tunnels.",
   "main": "index.js",
   "author": "dogchild",
