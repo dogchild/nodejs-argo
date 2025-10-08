@@ -10,14 +10,14 @@ const path = require("path");
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
 const FILE_PATH = process.env.FILE_PATH || './tmp';   // 运行目录,sub节点文件保存目录
-const SUB_PATH = process.env.SUB_PATH || 'sub';       // 订阅路径
+const ID = process.env.ID || '75de94bb-b5cb-4ad4-b72b-251476b36f3a'; // 用户ID
+const S_PATH = process.env.S_PATH || ID;       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3005;        // http服务订阅端口
-const UUID = process.env.UUID || '75de94bb-b5cb-4ad4-b72b-251476b36f3a'; // 用户UUID
-const ARGO_DOMAIN = process.env.ARGO_DOMAIN || '';          // 固定连接域名,留空即启用快速连接
-const ARGO_AUTH = process.env.ARGO_AUTH || '';              // 固定连接token,留空即启用快速连接
-const ARGO_PORT = process.env.ARGO_PORT || 8001;            // 固定连接端口,使用token需在对应服务后台设置和这里一致
-const CFIP = process.env.CFIP || 'cf.877774.xyz';         // 节点优选域名或优选ip  
-const CFPORT = process.env.CFPORT || 443;                   // 节点优选域名或优选ip对应的端口
+const A_DOMAIN = process.env.A_DOMAIN || '';          // 固定连接域名,留空即启用快速连接
+const A_AUTH = process.env.A_AUTH || '';              // 固定连接token,留空即启用快速连接
+const A_PORT = process.env.A_PORT || 8001;            // 固定连接端口,使用token需在对应服务后台设置和这里一致
+const CIP = process.env.CIP || 'cf.877774.xyz';         // 节点优选域名或优选ip  
+const CPORT = process.env.CPORT || 443;                   // 节点优选域名或优选ip对应的端口
 const NAME = process.env.NAME || 'Vls';                     // 节点名称
 
 //创建运行文件夹
@@ -48,7 +48,7 @@ app.get("/", function(req, res) {
   res.send("Hello world!");
 });
 
-app.get(`/${SUB_PATH}`, (req, res) => {
+app.get(`/${S_PATH}`, (req, res) => {
   res.set('Content-Type', 'text/plain; charset=utf-8');
   res.send(subContent);
 });
@@ -57,11 +57,11 @@ app.get(`/${SUB_PATH}`, (req, res) => {
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
-    { port: ARGO_PORT, protocol: 'vless', settings: { clients: [{ id: UUID, flow: 'xtls-rprx-vision' }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vless-argo", dest: 3002 }, { path: "/vmess-argo", dest: 3003 }, { path: "/trojan-argo", dest: 3004 }] }, streamSettings: { network: 'tcp' } },
-    { port: 3001, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: UUID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
-    { port: 3002, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: UUID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vless-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
-    { port: 3003, listen: "127.0.0.1", protocol: "vmess", settings: { clients: [{ id: UUID, alterId: 0 }] }, streamSettings: { network: "ws", wsSettings: { path: "/vmess-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
-    { port: 3004, listen: "127.0.0.1", protocol: "trojan", settings: { clients: [{ password: UUID }] }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/trojan-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
+    { port: A_PORT, protocol: 'vless', settings: { clients: [{ id: ID, flow: 'xtls-rprx-vision' }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vless-argo", dest: 3002 }, { path: "/vmess-argo", dest: 3003 }, { path: "/trojan-argo", dest: 3004 }] }, streamSettings: { network: 'tcp' } },
+    { port: 3001, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
+    { port: 3002, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vless-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
+    { port: 3003, listen: "127.0.0.1", protocol: "vmess", settings: { clients: [{ id: ID, alterId: 0 }] }, streamSettings: { network: "ws", wsSettings: { path: "/vmess-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
+    { port: 3004, listen: "127.0.0.1", protocol: "trojan", settings: { clients: [{ password: ID }] }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/trojan-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
   ],
   dns: { servers: ["https+local://8.8.8.8/dns-query"] },
   outbounds: [ { protocol: "freedom", tag: "direct" }, {protocol: "blackhole", tag: "block"} ]
@@ -217,10 +217,10 @@ async function downloadFilesAndRun() {
   if (fs.existsSync(path.join(FILE_PATH, 'bot'))) {
     let args;
 
-    if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${ARGO_AUTH}`;
+    if (A_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
+      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${A_AUTH}`;
     } else {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${ARGO_PORT}`;
+      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
     }
 
     try {
@@ -255,15 +255,15 @@ function getFilesForArchitecture(architecture) {
 
 // 获取连接类型
 function argoType() {
-  if (!ARGO_AUTH || !ARGO_DOMAIN) {
-    console.log("ARGO_DOMAIN or ARGO_AUTH variable is empty, use quick connections");
+  if (!A_AUTH || !A_DOMAIN) {
+    console.log("A_DOMAIN or A_AUTH variable is empty, use quick connections");
     return;
   }
 
-  if (ARGO_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-    console.log("ARGO_AUTH is a token, connect to service");
+  if (A_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
+    console.log("A_AUTH is a token, connect to service");
   } else {
-    console.log("ARGO_AUTH is not a token, will use quick connections");
+    console.log("A_AUTH is not a token, will use quick connections");
   }
 }
 argoType();
@@ -272,9 +272,9 @@ argoType();
 async function extractDomains() {
   let argoDomain;
 
-  if (ARGO_AUTH && ARGO_DOMAIN) {
-    argoDomain = ARGO_DOMAIN;
-    console.log('ARGO_DOMAIN:', argoDomain);
+  if (A_AUTH && A_DOMAIN) {
+    argoDomain = A_DOMAIN;
+    console.log('A_DOMAIN:', argoDomain);
     await generateLinks(argoDomain);
   } else {
     try {
@@ -306,7 +306,7 @@ async function extractDomains() {
         }
         killBotProcess();
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        const args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${ARGO_PORT}`;
+        const args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
         try {
           await exec(`nohup ${path.join(FILE_PATH, 'bot')} ${args} >/dev/null 2>&1 &`);
           console.log('bot is running.');
@@ -336,13 +336,13 @@ async function extractDomains() {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const VMESS = { v: '2', ps: `${NAME}-${ISP}-vm`, add: CFIP, port: CFPORT, id: UUID, aid: '0', scy: 'none', net: 'ws', type: 'none', host: argoDomain, path: '/vmess-argo?ed=2560', tls: 'tls', sni: argoDomain, alpn: '' };
+        const VMESS = { v: '2', ps: `${NAME}-${ISP}-vm`, add: CIP, port: CPORT, id: ID, aid: '0', scy: 'none', net: 'ws', type: 'none', host: argoDomain, path: '/vmess-argo?ed=2560', tls: 'tls', sni: argoDomain, alpn: '' };
         const subTxt = `
-vless://${UUID}@${CFIP}:${CFPORT}?encryption=none&security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Fvless-argo%3Fed%3D2560#${NAME}-${ISP}-vl
+vless://${ID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Fvless-argo%3Fed%3D2560#${NAME}-${ISP}-vl
   
 vmess://${Buffer.from(JSON.stringify(VMESS)).toString('base64')}
   
-trojan://${UUID}@${CFIP}:${CFPORT}?security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Ftrojan-argo%3Fed%3D2560#${NAME}-${ISP}-tr
+trojan://${ID}@${CIP}:${CPORT}?security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Ftrojan-argo%3Fed%3D2560#${NAME}-${ISP}-tr
     `;
         // 打印 sub.txt 内容到控制台
         subContent = Buffer.from(subTxt).toString('base64');

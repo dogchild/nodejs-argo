@@ -28,8 +28,6 @@ COPY --from=builder /app/node_modules ./node_modules
 # 复制应用文件
 COPY index.js .
 COPY package.json .
-COPY README.md .
-COPY LICENSE .
 
 # 创建并设置tmp目录权限（默认的FILE_PATH）
 RUN mkdir -p /app/tmp && \
@@ -40,12 +38,15 @@ RUN mkdir -p /app/tmp && \
 # 切换到非root用户
 USER node-app
 
+# 设置默认端口
+ENV PORT 3005
+
 # 暴露端口
-EXPOSE 3005
+EXPOSE $PORT
 
 # 设置健康检查
 HEALTHCHECK --interval=30s --timeout=3s \
-  CMD node -e "http.get('http://localhost:3005', (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+  CMD node -e "http.get('http://localhost:' + (process.env.SERVER_PORT || process.env.PORT || 3005), (res) => process.exit(res.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
 
 # 设置启动命令
 CMD ["node", "index.js"]

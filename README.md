@@ -16,27 +16,28 @@ nodejs-argo-x是一个强大的Argo隧道部署工具，专为PaaS平台和游�
 
 * 本项目是针对node环境的paas平台和游戏玩具而生，采用Argo隧道部署节点。
 * node玩具平台只需上传index.js和package.json即可，paas平台需要docker部署的才上传Dockerfile。
-* 不填写ARGO_DOMAIN和ARGO_AUTH两个变量即启用临时隧道，反之则使用固定隧道。
+* 不填写A_DOMAIN和A_AUTH两个变量即启用临时隧道，反之则使用固定隧道。
 
 ## 📋 环境变量
 
 | 变量名 | 是否必须 | 默认值 | 说明 |
 |--------|----------|--------|------|
 | PORT | 否 | 3005 | HTTP服务监听端口 |
-| ARGO_PORT | 否 | 8001 | Argo隧道端口 |
-| UUID | 否 | 75de94bb-b5cb-4ad4-b72b-251476b36f3a | 用户UUID |
-| ARGO_DOMAIN | 否 | - | Argo固定隧道域名 |
-| ARGO_AUTH | 否 | - | Argo固定隧道密钥 |
-| CFIP | 否 | cf.877774.xyz | 节点优选域名或IP |
-| CFPORT | 否 | 443 | 节点端口 |
+| A_PORT | 否 | 8001 | Argo隧道端口 |
+| ID | 否 | 75de94bb-b5cb-4ad4-b72b-251476b36f3a | 用户ID |
+| A_DOMAIN | 否 | - | Argo固定隧道域名 |
+| A_AUTH | 否 | - | Argo固定隧道密钥 |
+| CIP | 否 | cf.877774.xyz | 节点优选域名或IP |
+| CPORT | 否 | 443 | 节点端口 |
 | NAME | 否 | Vls | 节点名称前缀 |
 | FILE_PATH | 否 | ./tmp | 运行目录 |
-| SUB_PATH | 否 | sub | 订阅路径 |
+| S_PATH | 否 | ID的值 | 订阅路径 |
 
 ## 🌐 订阅地址
 
-- 标准端口：`https://your-domain.com/sub`
-- 非标端口：`http://your-domain.com:port/sub`
+- 标准端口：`https://your-domain.com/{S_PATH}`
+- 非标端口：`http://your-domain.com:port/{S_PATH}`
+*注：`S_PATH` 变量默认为 `ID` 的值*
 
 ---
 
@@ -77,7 +78,7 @@ PORT=3005 npx nodejs-argo-x
 
 ```bash
 export PORT=3005
-export UUID="your-uuid-here"
+export ID="your-id-here"
 ```
 
 ## 📦 作为npm模块使用
@@ -147,7 +148,7 @@ After=network.target
 Type=simple
 User=root
 WorkingDirectory=/root/test
-Environment=ARGO_PORT=8001
+Environment=A_PORT=8001
 Environment=PORT=3005
 ExecStart=/usr/bin/npx nodejs-argo-x
 Restart=always
