@@ -53,7 +53,7 @@ app.get(`/${S_PATH}`, (req, res) => {
   res.send(subContent);
 });
 
-// 生成web配置文件
+// 生成front配置文件
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
