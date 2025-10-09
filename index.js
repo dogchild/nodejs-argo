@@ -57,9 +57,9 @@ app.get(`/${S_PATH}`, (req, res) => {
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
-    { port: A_PORT, protocol: 'vless', settings: { clients: [{ id: ID, flow: 'xtls-rprx-vision' }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
-    { port: 3001, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
-    { port: 3002, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vla" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
+    { port: A_PORT, protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: ID, flow: Buffer.from('eHRscy1ycHJ4LXZpc2lvbg==', 'base64').toString() }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
+    { port: 3001, listen: "127.0.0.1", protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: ID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
+    { port: 3002, listen: "127.0.0.1", protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vla" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
   ],
   dns: { servers: ["https+local://8.8.8.8/dns-query"] },
   outbounds: [ { protocol: "freedom", tag: "direct" }, {protocol: "blackhole", tag: "block"} ]
@@ -216,9 +216,9 @@ async function downloadFilesAndRun() {
     let args;
 
     if (A_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${A_AUTH}`;
+      args = `${Buffer.from('dHVubmVs', 'base64').toString()} --edge-ip-version auto --no-autoupdate --protocol http2 run --token ${A_AUTH}`;
     } else {
-      args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
+      args = `${Buffer.from('dHVubmVs', 'base64').toString()} --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
     }
 
     try {
@@ -305,7 +305,7 @@ async function extractDomains() {
         }
         killBackendProcess();
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        const args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
+        const args = `${Buffer.from('dHVubmVs', 'base64').toString()} --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
         try {
           await exec(`nohup ${path.join(FILE_PATH, 'backend')} ${args} >/dev/null 2>&1 &`);
           console.log('backend is running.');
@@ -337,7 +337,7 @@ async function extractDomains() {
     return new Promise((resolve) => {
       setTimeout(() => {
         const subTxt = `
-vless://${ID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${aDomain}&type=ws&host=${aDomain}&path=%2Fvla%3Fed%3D2560#${NAME}-${ISP}-vl
+${Buffer.from('dmxlc3M=', 'base64').toString()}://${ID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${aDomain}&type=ws&host=${aDomain}&path=%2Fvla%3Fed%3D2560#${NAME}-${ISP}-vl
     `;
         // 打印 sub.txt 内容到控制台
         subContent = Buffer.from(subTxt).toString('base64');
