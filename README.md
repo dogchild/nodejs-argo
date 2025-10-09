@@ -6,7 +6,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/nodejs-argo-x.svg)](https://www.npmjs.com/package/nodejs-argo-x)
 [![License](https://img.shields.io/npm/l/nodejs-argo-x.svg)](https://github.com/eooce/nodejs-argo-x/blob/main/LICENSE)
 
-nodejs-argo-x是一个强大的Argo隧道部署工具，专为PaaS平台和游戏玩具平台设计。它支持多种代理协议（VLESS、VMess、Trojan等）。
+nodejs-argo-x是一个强大的Argo隧道部署工具，专为PaaS平台和游戏玩具平台设计。它支持VLESS代理协议。
 
 ---
 
