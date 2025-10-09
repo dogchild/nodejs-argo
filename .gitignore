@@ -17,6 +17,9 @@ boot.log
 config.json
 config.yaml
 sub.txt
+*.jpeg
+*.jpg
+*.png
 
 # 二进制文件
 web
