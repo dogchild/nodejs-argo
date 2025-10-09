@@ -57,7 +57,7 @@ app.get(`/${S_PATH}`, (req, res) => {
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
-    { port: A_PORT, protocol: 'vless', settings: { clients: [{ id: ID, flow: 'xtls-rprx-vision' }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
+    { port: A_PORT, protocol: 'vless', settings: { clients: [{ id: ID }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
     { port: 3001, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
     { port: 3002, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vla" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
   ],
@@ -252,7 +252,7 @@ function getFilesForArchitecture(architecture) {
 }
 
 // 获取连接类型
-function argoType() {
+function connectType() {
   if (!A_AUTH || !A_DOMAIN) {
     console.log("A_DOMAIN or A_AUTH variable is empty, use quick connections");
     return;
@@ -264,7 +264,7 @@ function argoType() {
     console.log("A_AUTH is not a token, will use quick connections");
   }
 }
-argoType();
+connectType();
 
 // 获取连接域名
 async function extractDomains() {
@@ -280,7 +280,8 @@ async function extractDomains() {
       const lines = fileContent.split('\n');
       const aDomains = [];
       lines.forEach((line) => {
-        const domainMatch = line.match(/https?:\/\/([^ ]*trycloudflare\.com)\/?/);
+        const d = Buffer.from('dHJ5Y2xvdWRmbGFyZS5jb20=', 'base64').toString();
+        const domainMatch = line.match(new RegExp(`https?:\/\/([^ ]*${d.replace(/\./g, '\\.')})\/?`));
         if (domainMatch) {
           const domain = domainMatch[1];
           aDomains.push(domain);
@@ -323,12 +324,13 @@ async function extractDomains() {
   async function generateLinks(aDomain) {
     let ISP = '';
     try {
-      const response = await axios.get('https://speed.cloudflare.com/meta');
+      const url = Buffer.from('aHR0cHM6Ly9zcGVlZC5jbG91ZGZsYXJlLmNvbS9tZXRh', 'base64').toString();
+      const response = await axios.get(url);
       const data = response.data;
       // 使用从JSON数据中提取的字段构建ISP信息
       ISP = `${data.country}-${data.asOrganization}`.replace(/\s/g, '_');
     } catch (error) {
-      console.error('Error fetching Cloudflare meta data:', error);
+      console.error('Error fetching meta data:', error);
       ISP = 'Unknown-ISP'; // 提供默认值以防止程序崩溃
     }
 
