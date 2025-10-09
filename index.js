@@ -57,11 +57,9 @@ app.get(`/${S_PATH}`, (req, res) => {
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
-    { port: A_PORT, protocol: 'vless', settings: { clients: [{ id: ID, flow: 'xtls-rprx-vision' }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vless-argo", dest: 3002 }, { path: "/vmess-argo", dest: 3003 }, { path: "/trojan-argo", dest: 3004 }] }, streamSettings: { network: 'tcp' } },
+    { port: A_PORT, protocol: 'vless', settings: { clients: [{ id: ID, flow: 'xtls-rprx-vision' }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
     { port: 3001, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
-    { port: 3002, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vless-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
-    { port: 3003, listen: "127.0.0.1", protocol: "vmess", settings: { clients: [{ id: ID, alterId: 0 }] }, streamSettings: { network: "ws", wsSettings: { path: "/vmess-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
-    { port: 3004, listen: "127.0.0.1", protocol: "trojan", settings: { clients: [{ password: ID }] }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/trojan-argo" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
+    { port: 3002, listen: "127.0.0.1", protocol: "vless", settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vla" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
   ],
   dns: { servers: ["https+local://8.8.8.8/dns-query"] },
   outbounds: [ { protocol: "freedom", tag: "direct" }, {protocol: "blackhole", tag: "block"} ]
@@ -200,21 +198,21 @@ async function downloadFilesAndRun() {
     });
   }
   
-  const filesToAuthorize = ['./web', './bot'];
+  const filesToAuthorize = ['./front', './backend'];
   authorizeFiles(filesToAuthorize);
 
-  //运行web
-  const command1 = `nohup ${FILE_PATH}/web -c ${FILE_PATH}/config.json >/dev/null 2>&1 &`;
+  //运行front
+  const command1 = `nohup ${FILE_PATH}/front -c ${FILE_PATH}/config.json >/dev/null 2>&1 &`;
   try {
     await exec(command1);
-    console.log('web is running');
+    console.log('front is running');
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
-    console.error(`web running error: ${error}`);
+    console.error(`front running error: ${error}`);
   }
 
-  // 运行bot
-  if (fs.existsSync(path.join(FILE_PATH, 'bot'))) {
+  // 运行backend
+  if (fs.existsSync(path.join(FILE_PATH, 'backend'))) {
     let args;
 
     if (A_AUTH.match(/^[A-Z0-9a-z=]{120,250}$/)) {
@@ -224,8 +222,8 @@ async function downloadFilesAndRun() {
     }
 
     try {
-      await exec(`nohup ${FILE_PATH}/bot ${args} >/dev/null 2>&1 &`);
-      console.log('bot is running');
+      await exec(`nohup ${FILE_PATH}/backend ${args} >/dev/null 2>&1 &`);
+      console.log('backend is running');
       await new Promise((resolve) => setTimeout(resolve, 2000));
     } catch (error) {
       console.error(`Error executing command: ${error}`);
@@ -240,13 +238,13 @@ function getFilesForArchitecture(architecture) {
   let baseFiles;
   if (architecture === 'arm') {
     baseFiles = [
-      { fileName: "web", fileUrl: "https://arm.dogchild.eu.org/xray" },
-      { fileName: "bot", fileUrl: "https://arm.dogchild.eu.org/cloudflared" }
+      { fileName: "front", fileUrl: "https://arm.dogchild.eu.org/front" },
+      { fileName: "backend", fileUrl: "https://arm.dogchild.eu.org/backend" }
     ];
   } else {
     baseFiles = [
-      { fileName: "web", fileUrl: "https://amd.dogchild.eu.org/xray" },
-      { fileName: "bot", fileUrl: "https://amd.dogchild.eu.org/cloudflared" }
+      { fileName: "front", fileUrl: "https://amd.dogchild.eu.org/front" },
+      { fileName: "backend", fileUrl: "https://amd.dogchild.eu.org/backend" }
     ];
   }
 
@@ -270,46 +268,46 @@ argoType();
 
 // 获取连接域名
 async function extractDomains() {
-  let argoDomain;
+  let aDomain;
 
   if (A_AUTH && A_DOMAIN) {
-    argoDomain = A_DOMAIN;
-    console.log('A_DOMAIN:', argoDomain);
-    await generateLinks(argoDomain);
+    aDomain = A_DOMAIN;
+    console.log('A_DOMAIN:', aDomain);
+    await generateLinks(aDomain);
   } else {
     try {
       const fileContent = fs.readFileSync(path.join(FILE_PATH, 'boot.log'), 'utf-8');
       const lines = fileContent.split('\n');
-      const argoDomains = [];
+      const aDomains = [];
       lines.forEach((line) => {
         const domainMatch = line.match(/https?:\/\/([^ ]*trycloudflare\.com)\/?/);
         if (domainMatch) {
           const domain = domainMatch[1];
-          argoDomains.push(domain);
+          aDomains.push(domain);
         }
       });
 
-      if (argoDomains.length > 0) {
-        argoDomain = argoDomains[0];
-        console.log('ArgoDomain:', argoDomain);
-        await generateLinks(argoDomain);
+      if (aDomains.length > 0) {
+        aDomain = aDomains[0];
+        console.log('ADomain:', aDomain);
+        await generateLinks(aDomain);
       } else {
-        console.log('ArgoDomain not found, re-running bot to obtain ArgoDomain');
-        // 删除 boot.log 文件，等待 2s 重新运行 server 以获取 ArgoDomain
+        console.log('ADomain not found, re-running backend to obtain ADomain');
+        // 删除 boot.log 文件，等待 2s 重新运行 server 以获取 ADomain
         fs.unlinkSync(path.join(FILE_PATH, 'boot.log'));
-        async function killBotProcess() {
+        async function killBackendProcess() {
           try {
-            await exec('pkill -f "[b]ot" > /dev/null 2>&1');
+            await exec('pkill -f "[b]ackend" > /dev/null 2>&1');
           } catch (error) {
             // 忽略输出
           }
         }
-        killBotProcess();
+        killBackendProcess();
         await new Promise((resolve) => setTimeout(resolve, 3000));
         const args = `tunnel --edge-ip-version auto --no-autoupdate --protocol http2 --logfile ${FILE_PATH}/boot.log --loglevel info --url http://localhost:${A_PORT}`;
         try {
-          await exec(`nohup ${path.join(FILE_PATH, 'bot')} ${args} >/dev/null 2>&1 &`);
-          console.log('bot is running.');
+          await exec(`nohup ${path.join(FILE_PATH, 'backend')} ${args} >/dev/null 2>&1 &`);
+          console.log('backend is running.');
           await new Promise((resolve) => setTimeout(resolve, 3000));
           await extractDomains(); // 重新提取域名
         } catch (error) {
@@ -322,7 +320,7 @@ async function extractDomains() {
   }
 
   // 生成 sub 信息
-  async function generateLinks(argoDomain) {
+  async function generateLinks(aDomain) {
     let ISP = '';
     try {
       const response = await axios.get('https://speed.cloudflare.com/meta');
@@ -336,13 +334,8 @@ async function extractDomains() {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        const VMESS = { v: '2', ps: `${NAME}-${ISP}-vm`, add: CIP, port: CPORT, id: ID, aid: '0', scy: 'none', net: 'ws', type: 'none', host: argoDomain, path: '/vmess-argo?ed=2560', tls: 'tls', sni: argoDomain, alpn: '' };
         const subTxt = `
-vless://${ID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Fvless-argo%3Fed%3D2560#${NAME}-${ISP}-vl
-  
-vmess://${Buffer.from(JSON.stringify(VMESS)).toString('base64')}
-  
-trojan://${ID}@${CIP}:${CPORT}?security=tls&sni=${argoDomain}&type=ws&host=${argoDomain}&path=%2Ftrojan-argo%3Fed%3D2560#${NAME}-${ISP}-tr
+vless://${ID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${aDomain}&type=ws&host=${aDomain}&path=%2Fvla%3Fed%3D2560#${NAME}-${ISP}-vl
     `;
         // 打印 sub.txt 内容到控制台
         subContent = Buffer.from(subTxt).toString('base64');
