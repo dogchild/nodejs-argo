@@ -38,11 +38,8 @@ RUN mkdir -p /app/tmp && \
 # 切换到非root用户
 USER node-app
 
-# 设置默认端口
-ENV PORT 3005
-
 # 暴露端口
-EXPOSE $PORT
+EXPOSE 3005
 
 # 设置健康检查
 HEALTHCHECK --interval=30s --timeout=3s \
