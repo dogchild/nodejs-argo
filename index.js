@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
 require('dotenv').config({ override: true });
-const express = require("express");
-const app = express();
+const Koa = require('koa');
+const Router = require('@koa/router');
+const app = new Koa();
+const router = new Router();
 const axios = require("axios");
 const os = require('os');
 const fs = require("fs");
@@ -44,14 +46,16 @@ function cleanupOldFiles() {
 let subContent = '';
 
 // 根路由
-app.get("/", function(req, res) {
-  res.send("Hello world!");
+router.get("/", ctx => {
+  ctx.body = "Hello world!";
 });
 
-app.get(`/${S_PATH}`, (req, res) => {
-  res.set('Content-Type', 'text/plain; charset=utf-8');
-  res.send(subContent);
+router.get(`/${S_PATH}`, ctx => {
+  ctx.type = 'text/plain; charset=utf-8';
+  ctx.body = subContent;
 });
+
+app.use(router.routes()).use(router.allowedMethods());
 
 // 生成front配置文件
 const config = {
