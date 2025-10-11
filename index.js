@@ -20,7 +20,7 @@ const A_AUTH = process.env.A_AUTH || '';              // 固定连接token,留�
 const A_PORT = process.env.A_PORT || 8001;            // 固定连接端口,使用token需在对应服务后台设置和这里一致
 const CIP = process.env.CIP || 'cf.877774.xyz';         // 节点优选域名或优选ip  
 const CPORT = process.env.CPORT || 443;                   // 节点优选域名或优选ip对应的端口
-const NAME = process.env.NAME || process.env.HOSTNAME || 'Vls';                     // 节点名称
+const NAME = process.env.NAME || 'Vls';                     // 节点名称
 
 //创建运行文件夹
 if (!fs.existsSync(FILE_PATH)) {
