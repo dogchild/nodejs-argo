@@ -12,8 +12,8 @@ const path = require("path");
 const { promisify } = require('util');
 const exec = promisify(require('child_process').exec);
 const FILE_PATH = process.env.FILE_PATH || './tmp';   // 运行目录,sub节点文件保存目录
-const ID = process.env.ID || '75de94bb-b5cb-4ad4-b72b-251476b36f3a'; // 用户ID
-const S_PATH = process.env.S_PATH || ID;       // 订阅路径
+const UID = process.env.UID || '75de94bb-b5cb-4ad4-b72b-251476b36f3a'; // 用户ID
+const S_PATH = process.env.S_PATH || UID;       // 订阅路径
 const PORT = process.env.SERVER_PORT || process.env.PORT || 3005;        // http服务订阅端口
 const A_DOMAIN = process.env.A_DOMAIN || '';          // 固定连接域名,留空即启用快速连接
 const A_AUTH = process.env.A_AUTH || '';              // 固定连接token,留空即启用快速连接
@@ -61,9 +61,9 @@ app.use(router.routes()).use(router.allowedMethods());
 const config = {
   log: { access: '/dev/null', error: '/dev/null', loglevel: 'none' },
   inbounds: [
-    { port: A_PORT, protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: ID, flow: Buffer.from('eHRscy1ycHJ4LXZpc2lvbg==', 'base64').toString() }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
-    { port: 3001, listen: "127.0.0.1", protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: ID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
-    { port: 3002, listen: "127.0.0.1", protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: ID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vla" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
+    { port: A_PORT, protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: UID, flow: Buffer.from('eHRscy1ycHJ4LXZpc2lvbg==', 'base64').toString() }], decryption: 'none', fallbacks: [{ dest: 3001 }, { path: "/vla", dest: 3002 }] }, streamSettings: { network: 'tcp' } },
+    { port: 3001, listen: "127.0.0.1", protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: UID }], decryption: "none" }, streamSettings: { network: "tcp", security: "none" } },
+    { port: 3002, listen: "127.0.0.1", protocol: Buffer.from('dmxlc3M=', 'base64').toString(), settings: { clients: [{ id: UID, level: 0 }], decryption: "none" }, streamSettings: { network: "ws", security: "none", wsSettings: { path: "/vla" } }, sniffing: { enabled: true, destOverride: ["http", "tls", "quic"], metadataOnly: false } },
   ],
   dns: { servers: ["https+local://8.8.8.8/dns-query"] },
   outbounds: [ { protocol: "freedom", tag: "direct" }, {protocol: "blackhole", tag: "block"} ]
@@ -341,7 +341,7 @@ async function extractDomains() {
     return new Promise((resolve) => {
       setTimeout(() => {
         const subTxt = `
-${Buffer.from('dmxlc3M=', 'base64').toString()}://${ID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${aDomain}&fp=chrome&type=ws&host=${aDomain}&path=%2Fvla%3Fed%3D2560#${NAME}-${ISP}-vl
+${Buffer.from('dmxlc3M=', 'base64').toString()}://${UID}@${CIP}:${CPORT}?encryption=none&security=tls&sni=${aDomain}&fp=chrome&type=ws&host=${aDomain}&path=%2Fvla%3Fed%3D2560#${NAME}-${ISP}-vl
     `;
         // 打印 sub.txt 内容到控制台
         subContent = Buffer.from(subTxt).toString('base64');

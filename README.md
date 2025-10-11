@@ -24,7 +24,7 @@ nodejs-argo-x是一个强大的Argo隧道部署工具，专为PaaS平台和游�
 |--------|----------|--------|------|
 | PORT | 否 | 3005 | HTTP服务监听端口 |
 | A_PORT | 否 | 8001 | Argo隧道端口 |
-| ID | 否 | 75de94bb-b5cb-4ad4-b72b-251476b36f3a | 用户ID |
+| UID | 否 | 75de94bb-b5cb-4ad4-b72b-251476b36f3a | 用户ID |
 | A_DOMAIN | 否 | - | Argo固定隧道域名 |
 | A_AUTH | 否 | - | Argo固定隧道密钥 |
 | CIP | 否 | cf.877774.xyz | 节点优选域名或IP |
@@ -37,7 +37,7 @@ nodejs-argo-x是一个强大的Argo隧道部署工具，专为PaaS平台和游�
 
 - 标准端口：`https://your-domain.com/{S_PATH}`
 - 非标端口：`http://your-domain.com:port/{S_PATH}`
-*注：`S_PATH` 变量默认为 `ID` 的值*
+*注：`S_PATH` 变量默认为 `UID` 的值*
 
 ---
 
@@ -78,7 +78,7 @@ PORT=3005 npx nodejs-argo-x
 
 ```bash
 export PORT=3005
-export ID="your-id-here"
+export UID="your-id-here"
 ```
 
 ## 📦 作为npm模块使用
